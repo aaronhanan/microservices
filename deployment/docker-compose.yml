@@ -59,7 +59,8 @@ services:
       - "db"
   processing:
     image: processing
-    network_mode: "host"
+    build:
+      network: host
     ports:
       - "8100:8100"
     depends_on:
