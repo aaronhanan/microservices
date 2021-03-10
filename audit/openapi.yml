@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  description: This API recieves order events from mobile devices
+  version: "1.0.0"
+  title: Order API
+  contact:
+    email: hanantharajah@my.bcit.ca
+
+paths:
+  /food_order:
+    get:
+      summary: gets a food delivery order from history
+      operationId: app.get_food_order
+      description: Gets a food order from the eventstore
+      parameters:
+        - name: index
+          in: query
+          description: Gets the Food Order at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a food delivery order
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/FoodOrder'
+        '400':
+            description: Invalid request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /scheduled_order:
+    get:
+      summary: gets a scheduled food order from history
+      operationId: app.get_scheduled_order
+      description: Gets a new scheduled order from the eventstore
+      parameters:
+        - name: index
+          in: query
+          description: Gets the Food Order at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned ascheduled food order event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ScheduledOrder'
+        '400':
+            description: Invalid request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    FoodOrder:
+      type: object
+      required:
+        - customer_id
+        - name
+        - phone
+        - order_date
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: John Wall
+        order_date:
+          type: string
+          format: date-time
+          example: '2016-08-29 09:12:33.088831'
+        phone:
+          type: string
+          example: 408-867-5309
+
+    ScheduledOrder:
+      required:
+        - customer_id
+        - name
+        - phone
+        - order_date
+        - scheduled_date
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: John Wall
+        order_date:
+          type: string
+          format: date-time
+          example: '2016-08-29 09:12:33.088831'
+        scheduled_date:
+          type: string
+          format: date-time
+          example: '2017-08-29 09:12:33.088831'
+        phone:
+          type: string
+          example: 408-867-5309
+      type: object

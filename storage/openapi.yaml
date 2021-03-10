@@ -1,0 +1,171 @@
+openapi: 3.0.0
+info:
+  description: This API recieves order events from mobile devices
+  version: "1.0.0"
+  title: Order API
+  contact:
+    email: hanantharajah@my.bcit.ca
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: devices
+    description: Operations available to mobile devices
+paths:
+  /orders/food-delivery:
+#    post:
+#      tags:
+#        - devices
+#      summary: reports a food delivery order
+#      operationId: app.report_food_order
+#      description: Adds a new food order to the system
+#      responses:
+#        '201':
+#          description: item created
+#        '400':
+#          description: 'invalid input, object invalid'
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/FoodOrder'
+#        description: Inventory item to add
+    get:
+      tags:
+        - devices
+      summary: gets a food delivery order
+      operationId: app.get_food_order
+      description: Gets a food order from the system
+      parameters:
+        - name: timestamp
+          in: query
+          description: Limits the number of items on a page
+          schema:
+            type: string
+            format: date-time
+            example: '2016-08-29 09:12:33.088831'
+      responses:
+        '200':
+          description: Successfully returned a list of food delivery order events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodOrder'
+        '400':
+            description: Invalid request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+
+  /orders/scheduled-delivery:
+#    post:
+#      tags:
+#        - devices
+#      summary: reports a scheduled food order delivery
+#      operationId: app.report_scheduled_order
+#      description: Adds a new scheduled order to the system
+#      responses:
+#        '201':
+#          description: item created
+#        '400':
+#          description: 'invalid input, object invalid'
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/ScheduledOrder'
+#        description: Order item to add
+    get:
+      tags:
+        - devices
+      summary: gets a scheduled food order delivery
+      operationId: app.get_scheduled_order
+      description: Gets a new scheduled order from the system
+      parameters:
+        - name: timestamp
+          in: query
+          description: Limits the number of items on a page
+          schema:
+            type: string
+            format: date-time
+            example: '2016-08-29 09:12:33.088831'
+      responses:
+        '200':
+          description: Successfully returned a list of scheduled food order events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduledOrder'
+        '400':
+            description: Invalid request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+components:
+  schemas:
+    FoodOrder:
+      type: object
+      required:
+        - customer_id
+        - name
+        - phone
+        - order_date
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: John Wall
+        order_date:
+          type: string
+          format: date-time
+          example: '2016-08-29 09:12:33.088831'
+        phone:
+          type: string
+          example: 408-867-5309
+
+    ScheduledOrder:
+      required:
+        - customer_id
+        - name
+        - phone
+        - order_date
+        - scheduled_date
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: John Wall
+        order_date:
+          type: string
+          format: date-time
+          example: '2016-08-29 09:12:33.088831'
+        scheduled_date:
+          type: string
+          format: date-time
+          example: '2017-08-29 09:12:33.088831'
+        phone:
+          type: string
+          example: 408-867-5309
+      type: object
+# servers:
+#   # Added by API Auto Mocking Plugin
+#   - description: SwaggerHub API Auto Mocking
+#     url: https://virtserver.swaggerhub.com/harish5/Orders/1.0.0

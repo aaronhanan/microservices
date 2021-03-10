@@ -1,0 +1,9 @@
+version: 1
+eventstore1:
+  url: http://localhost:8090/orders/food-delivery
+eventstore2:
+  url: http://localhost:8090/orders/scheduled-delivery
+events:
+  hostname: kafka-service.westus2.cloudapp.azure.com
+  port: 9092
+  topic: events
