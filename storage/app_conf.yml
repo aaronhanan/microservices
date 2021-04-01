@@ -9,3 +9,5 @@ events:
  hostname: kafka-service.westus2.cloudapp.azure.com
  port: 9092
  topic: events
+ sleep: 3
+ max_retry: 10

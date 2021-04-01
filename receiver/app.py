@@ -8,6 +8,7 @@ import datetime
 import json
 from pykafka import KafkaClient
 import os
+import time
 
 STORAGE_URL = "http://localhost:8090"
 headers = {"Content-Type": "application/json"}
@@ -34,16 +35,29 @@ logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
 
+tmp_max = app_config["events"]["max_retry"]
+retry_count = 0
+
+while retry_count < tmp_max:
+    try:
+        logger.info("Trying to Connect to Kafka " + retry_count)
+
+        client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
+        topic = client.topics[str.encode(app_config["events"]["topic"])]
+    except:
+        logger.error("Connecting to Kafka failed")
+        time.sleep(app_config["events"]["sleep"])
+        retry_count += 1
+
+
 def report_food_order(body):
     logger.info("Received event Food Order ID: " + str(body['customer_id']))
 
     # response = requests.post(app_config["eventstore1"]["url"], json=body, headers=headers)
     #
     # logger.info("INFO " + str(body['customer_id']) + " " + str(response.status_code))
-
-    client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
     producer = topic.get_sync_producer()
+
     msg = {"type": "fo",
            "datetime":
                datetime.datetime.now().strftime(
@@ -65,9 +79,8 @@ def report_scheduled_order(body):
     #
     # logger.info("INFO " + str(body['customer_id']) + " " + str(response.status_code))
 
-    client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
     producer = topic.get_sync_producer()
+    
     msg = {"type": "so",
            "datetime":
                datetime.datetime.now().strftime(

@@ -14,6 +14,7 @@ from threading import Thread
 import json
 import os
 from sqlalchemy import and_
+import time
 
 MAX_EVENTS = 10
 EVENT_FILE = 'events.json'
@@ -130,10 +131,22 @@ def get_scheduled_order(start_timestamp, end_timestamp):
 
 def process_messages():
     """ Process event messages """
+    tmp_max = app_config["events"]["max_retry"]
+    retry_count = 0
+
     hostname = "%s:%d" % (app_config["events"]["hostname"],
                           app_config["events"]["port"])
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
+
+    while retry_count < tmp_max:
+        try:
+            logger.info("Trying to Connect to Kafka " + retry_count)
+
+            client = KafkaClient(hosts=hostname)
+            topic = client.topics[str.encode(app_config["events"]["topic"])]
+        except:
+            logger.error("Connecting to Kafka failed")
+            time.sleep(app_config["events"]["sleep"])
+            retry_count += 1
 
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
