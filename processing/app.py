@@ -1,3 +1,4 @@
+from sqlalchemy.sql.functions import current_timestamp
 import connexion
 import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -54,7 +55,7 @@ def populate_stats():
     if "last_updated" in stats:
         last_updated = stats["last_updated"]
 
-    response = requests.get(app_config["eventstore"]["url"] + "/orders/food-delivery?timestamp=" + str(last_updated))
+    response = requests.get(app_config["eventstore"]["url"] + "/orders/food-delivery?start_timestamp=" + str(last_updated) + "&end_timestamp=" + str(current_timestamp))
     if response.status_code == 200:
         if "num_food_orders" in stats.keys():
             stats["num_food_orders"] += len(response.json())
@@ -63,7 +64,7 @@ def populate_stats():
 
         logger.info("Processed %d Food Orders" % len(response.json()))
 
-    response = requests.get(app_config["eventstore"]["url"] + "/orders/scheduled-delivery?timestamp=" + str(last_updated))
+    response = requests.get(app_config["eventstore"]["url"] + "/orders/scheduled-delivery?start_timestamp=" + str(last_updated) + "&end_timestamp=" + str(current_timestamp))
     if response.status_code == 200:
         if "num_scheduled_orders" in stats.keys():
             stats["num_scheduled_orders"] += len(response.json())
@@ -72,7 +73,8 @@ def populate_stats():
 
         logger.info("Processed %d Scheduled Orders" % len(response.json()))
 
-    stats["last_updated"] = str(datetime.datetime.now())
+    # stats["last_updated"] = str(datetime.datetime.now())
+    stats["last_updated"] = current_timestamp
     stats_file = open(app_config["datastore"]["filename"], "w")
 
     stats_file.write(json.dumps(stats, indent=4))

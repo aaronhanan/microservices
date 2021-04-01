@@ -13,6 +13,7 @@ from pykafka.common import OffsetType
 from threading import Thread
 import json
 import os
+from sqlalchemy import and_
 
 MAX_EVENTS = 10
 EVENT_FILE = 'events.json'
@@ -82,14 +83,16 @@ def report_scheduled_order(body):
     logger.debug("DEBUG: report_scheduled_order " + str(body['customer_id']))
 
 
-def get_food_order(timestamp):
+def get_food_order(start_timestamp, end_timestamp):
     """ Gets new food order after the timestamp """
 
     session = DB_SESSION()
-    timestamp_datetime = datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
-    print(timestamp_datetime)
 
-    orders = session.query(FoodOrder).filter(FoodOrder.order_date >= timestamp_datetime)
+    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+    print(start_timestamp_datetime)
+
+    orders = session.query(FoodOrder).filter(and_(FoodOrder.order_date >= start_timestamp_datetime, FoodOrder.order_date < end_timestamp_datetime))
     results_list = []
 
     for order in orders:
@@ -98,20 +101,21 @@ def get_food_order(timestamp):
 
     session.close()
 
-    logger.info("Query for Food Orders after %s returns %d results" % (timestamp, len(results_list)))
+    logger.info("Query for Food Orders after %s returns %d results" % (start_timestamp, len(results_list)))
 
     return results_list, 200
 
 
-def get_scheduled_order(timestamp):
+def get_scheduled_order(start_timestamp, end_timestamp):
     """ Gets new scheduled order after the timestamp """
 
     session = DB_SESSION()
 
-    timestamp_datetime = datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
-    print(timestamp_datetime)
+    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+    # print(start_timestamp_datetime)
 
-    orders = session.query(ScheduledOrder).filter(ScheduledOrder.order_date >= timestamp_datetime)
+    orders = session.query(ScheduledOrder).filter(and_(ScheduledOrder.order_date >= start_timestamp_datetime, ScheduledOrder.order_date < end_timestamp_datetime))
     results_list = []
 
     for order in orders:
@@ -119,7 +123,7 @@ def get_scheduled_order(timestamp):
 
     session.close()
 
-    logger.info("Query for Scheduled Orders after %s returns %d results" % (timestamp, len(results_list)))
+    logger.info("Query for Scheduled Orders after %s returns %d results" % (start_timestamp, len(results_list)))
 
     return results_list, 200
 
