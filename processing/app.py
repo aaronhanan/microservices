@@ -1,5 +1,4 @@
 # from sqlalchemy.sql.functions import current_timestamp
-from sqlalchemy.sql.functions import current_timestamp
 import connexion
 import yaml
 from apscheduler.schedulers.background import BackgroundScheduler
