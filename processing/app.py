@@ -48,13 +48,15 @@ def populate_stats():
 
         data = stats_file.read()
         stats = json.loads(data)
+        print(data)
 
         stats_file.close()
+        
+    current_timestamp = datetime.datetime.now()
+    last_updated = current_timestamp
 
-    last_updated = datetime.datetime.now()
     if "last_updated" in stats:
         last_updated = stats["last_updated"]
-    current_timestamp = datetime.datetime.now()
 
     response = requests.get(app_config["eventstore"]["url"] + "/orders/food-delivery?start_timestamp=" + str(last_updated) + "&end_timestamp=" + str(current_timestamp))
     if response.status_code == 200:
