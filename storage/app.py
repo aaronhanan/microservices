@@ -137,7 +137,7 @@ def process_messages():
     hostname = "%s:%d" % (app_config["events"]["hostname"],
                           app_config["events"]["port"])
 
-    logger.info("Trying to Connect to Kafka " + retry_count)
+    logger.info("Trying to Connect to Kafka " + str(retry_count))
     client = KafkaClient(hosts=hostname)
     topic = client.topics[str.encode(app_config["events"]["topic"])]
 

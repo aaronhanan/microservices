@@ -38,7 +38,7 @@ logger.info("Log Conf File: %s" % log_conf_file)
 tmp_max = app_config["events"]["max_retry"]
 retry_count = 0
 
-logger.info("Trying to Connect to Kafka " + retry_count)
+logger.info("Trying to Connect to Kafka " + str(retry_count))
 client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
 topic = client.topics[str.encode(app_config["events"]["topic"])]
 
