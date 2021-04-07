@@ -38,16 +38,19 @@ logger.info("Log Conf File: %s" % log_conf_file)
 tmp_max = app_config["events"]["max_retry"]
 retry_count = 0
 
-while retry_count < tmp_max:
-    try:
-        logger.info("Trying to Connect to Kafka " + retry_count)
+logger.info("Trying to Connect to Kafka " + retry_count)
+client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
+topic = client.topics[str.encode(app_config["events"]["topic"])]
 
-        client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
-        topic = client.topics[str.encode(app_config["events"]["topic"])]
-    except:
-        logger.error("Connecting to Kafka failed")
-        time.sleep(app_config["events"]["sleep"])
-        retry_count += 1
+# while retry_count < tmp_max:
+#     try:
+#         logger.info("Trying to Connect to Kafka " + retry_count)
+#         client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
+#         topic = client.topics[str.encode(app_config["events"]["topic"])]
+#     except:
+#         logger.error("Connecting to Kafka failed")
+#         time.sleep(app_config["events"]["sleep"])
+#         retry_count += 1
 
 
 def report_food_order(body):
