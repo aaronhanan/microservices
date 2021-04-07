@@ -37,13 +37,20 @@ paths:
       operationId: app.get_food_order
       description: Gets a food order from the system
       parameters:
-        - name: timestamp
+        - name: start_timestamp
           in: query
           description: Limits the number of items on a page
           schema:
             type: string
             format: date-time
             example: '2016-08-29 09:12:33.088831'
+        - name: end_timestamp
+          in: query
+          description: Limits the number of items on a page
+          schema:
+            type: string
+            format: date-time
+            example: '2016-08-29 09:15:33.088831'
       responses:
         '200':
           description: Successfully returned a list of food delivery order events
