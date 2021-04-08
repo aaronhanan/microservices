@@ -13,6 +13,7 @@ from pykafka.common import OffsetType
 from threading import Thread
 import json
 import os
+import time
 
 MAX_EVENTS = 10
 EVENT_FILE = 'events.json'
@@ -128,8 +129,23 @@ def process_messages():
     """ Process event messages """
     hostname = "%s:%d" % (app_config["events"]["hostname"],
                           app_config["events"]["port"])
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    # client = KafkaClient(hosts=hostname)
+    # topic = client.topics[str.encode(app_config["events"]["topic"])]
+
+    max_retry = int(app_config["events"]["max_retry"])
+    retry_count = 0
+
+    while retry_count < max_retry:
+        try:
+            logger.info("Trying to Connect to Kafka " + str(retry_count))
+            client = KafkaClient(hosts=hostname)
+            topic = client.topics[str.encode(app_config["events"]["topic"])]
+            retry_count = max_retry
+        except:
+            logger.error("Connecting to Kafka failed " + str(retry_count))
+            time.sleep(app_config["events"]["sleep"])
+            retry_count += 1
+
 
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
@@ -137,6 +153,7 @@ def process_messages():
     consumer = topic.get_simple_consumer(consumer_group=b'event_group',
                                          reset_offset_on_start=False,
                                          auto_offset_reset=OffsetType.LATEST)
+
 
     # This is blocking - it will wait for a new message
     for msg in consumer:
