@@ -42,15 +42,16 @@ retry_count = 0
 # client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
 # topic = client.topics[str.encode(app_config["events"]["topic"])]
 
-# while retry_count < tmp_max:
-#     try:
-#         logger.info("Trying to Connect to Kafka " + retry_count)
-#         client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
-#         topic = client.topics[str.encode(app_config["events"]["topic"])]
-#     except:
-#         logger.error("Connecting to Kafka failed")
-#         time.sleep(app_config["events"]["sleep"])
-#         retry_count += 1
+while retry_count < tmp_max:
+    try:
+        logger.info("Trying to Connect to Kafka " + str(retry_count))
+        client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
+        topic = client.topics[str.encode(app_config["events"]["topic"])]
+        retry_count = tmp_max
+    except:
+        logger.error("Connecting to Kafka failed")
+        time.sleep(app_config["events"]["sleep"])
+        retry_count += 1
 
 
 def report_food_order(body):
@@ -59,9 +60,9 @@ def report_food_order(body):
     # response = requests.post(app_config["eventstore1"]["url"], json=body, headers=headers)
     #
     # logger.info("INFO " + str(body['customer_id']) + " " + str(response.status_code))
-    logger.info("Trying to Connect to Kafka " + str(retry_count))
-    client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    # logger.info("Trying to Connect to Kafka " + str(retry_count))
+    # client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
+    # topic = client.topics[str.encode(app_config["events"]["topic"])]
     producer = topic.get_sync_producer()
 
     msg = {"type": "fo",
@@ -84,9 +85,9 @@ def report_scheduled_order(body):
     # response = requests.post(app_config["eventstore2"]["url"], json=body, headers=headers)
     #
     # logger.info("INFO " + str(body['customer_id']) + " " + str(response.status_code))
-    logger.info("Trying to Connect to Kafka " + str(retry_count))
-    client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    # logger.info("Trying to Connect to Kafka " + str(retry_count))
+    # client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
+    # topic = client.topics[str.encode(app_config["events"]["topic"])]
     producer = topic.get_sync_producer()
     
     msg = {"type": "so",
