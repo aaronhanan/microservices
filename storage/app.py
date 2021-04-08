@@ -91,8 +91,7 @@ def get_food_order(start_timestamp, end_timestamp):
     end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%d %H:%M:%S.%f")
     # print(timestamp_datetime)
 
-    # orders = session.query(FoodOrder).filter(and_(FoodOrder.order_date >= start_timestamp_datetime, FoodOrder.order_date < end_timestamp_datetime))
-    orders = session.query(FoodOrder).filter(FoodOrder.order_date >= start_timestamp_datetime)
+    orders = session.query(FoodOrder).filter(and_(FoodOrder.order_date >= start_timestamp_datetime, FoodOrder.order_date < end_timestamp_datetime))
     results_list = []
 
     for order in orders:
@@ -115,8 +114,7 @@ def get_scheduled_order(start_timestamp, end_timestamp):
     end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%d %H:%M:%S.%f")
     # print(start_timestamp_datetime)
 
-    # orders = session.query(ScheduledOrder).filter(and_(ScheduledOrder.order_date >= start_timestamp_datetime, ScheduledOrder.order_date < end_timestamp_datetime))
-    orders = session.query(ScheduledOrder).filter(ScheduledOrder.order_date >= start_timestamp_datetime)
+    orders = session.query(ScheduledOrder).filter(ScheduledOrder.order_date >= start_timestamp_datetime, ScheduledOrder.order_date < end_timestamp_datetime)
     results_list = []
 
     for order in orders:
