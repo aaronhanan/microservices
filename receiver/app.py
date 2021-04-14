@@ -42,6 +42,7 @@ while retry_count < max_retry:
         logger.info("Trying to Connect to Kafka " + str(retry_count))
         client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
         topic = client.topics[str.encode(app_config["events"]["topic"])]
+        producer = topic.get_sync_producer()
         retry_count = max_retry
     except:
         logger.error("Connecting to Kafka failed " + str(retry_count))
@@ -58,7 +59,6 @@ def report_food_order(body):
 
     # client = KafkaClient(hosts=app_config["events"]["hostname"] + ":" + str(app_config["events"]["port"]))
     # topic = client.topics[str.encode(app_config["events"]["topic"])]
-    producer = topic.get_sync_producer()
     msg = {"type": "fo",
            "datetime":
                datetime.datetime.now().strftime(
@@ -80,7 +80,6 @@ def report_scheduled_order(body):
     #
     # logger.info("INFO " + str(body['customer_id']) + " " + str(response.status_code))
 
-    producer = topic.get_sync_producer()
     msg = {"type": "so",
            "datetime":
                datetime.datetime.now().strftime(
